@@ -56,6 +56,9 @@ export const exportThemeList = [{
   label: 'GitHub (Default)',
   value: 'default'
 }, {
+  label: 'Lato Print',
+  value: 'lato-print'
+}, {
   label: 'Liber',
   value: 'liber'
 }]
