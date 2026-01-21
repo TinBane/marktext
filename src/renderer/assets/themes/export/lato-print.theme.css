@@ -7,7 +7,7 @@
 .markdown-body {
   font-family: "Lato", "Helvetica Neue", "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 12pt;
-  line-height: 1.4;
+  line-height: 1.25;
   color: #1a1a1a;
 }
 
@@ -57,20 +57,20 @@
 .markdown-body h6 {
   font-weight: 700;
   color: #0d0d0d;
-  margin-top: 1.2em;
-  margin-bottom: 0.4em;
+  margin-top: 0.9em;
+  margin-bottom: 0.25em;
 }
 
 /* H1 is much larger than H2 for clear visual distinction */
 .markdown-body h1 {
   font-size: 2.2em;
   font-weight: 900;
-  margin-top: 0.8em;
-  margin-bottom: 0.5em;
+  margin-top: 0.6em;
+  margin-bottom: 0.3em;
 }
 .markdown-body h2 {
   font-size: 1.5em;
-  margin-bottom: 0.4em;
+  margin-bottom: 0.25em;
 }
 .markdown-body h3 {
   font-size: 1.25em;
@@ -95,10 +95,10 @@
   padding-bottom: 0;
 }
 
-/* Paragraphs - tighter spacing after headings for print */
+/* Paragraphs - tight spacing for print */
 .markdown-body p {
   margin-top: 0;
-  margin-bottom: 0.8em;
+  margin-bottom: 0.4em;
 }
 
 /* Reduce spacing between heading and following content */
@@ -119,7 +119,7 @@
 .markdown-body h3 + ol,
 .markdown-body h4 + ul,
 .markdown-body h4 + ol {
-  margin-top: 0.3em;
+  margin-top: 0.15em;
 }
 
 /* Links - subtle for print */
@@ -178,27 +178,41 @@
 }
 
 .markdown-body table tr {
-  background: none;
+  background-color: #fff;
   border-top: 1px solid #333;
 }
 
 .markdown-body table tr:nth-child(2n) {
-  background: none;
+  background-color: #f5f5f5;
 }
 
-/* Lists - tighter spacing for print */
+/* Lists - tight spacing for print */
 .markdown-body ul,
 .markdown-body ol {
   padding-left: 1.5em;
-  margin-bottom: 0.8em;
+  margin-top: 0.2em;
+  margin-bottom: 0.4em;
 }
 
 .markdown-body li {
-  margin-bottom: 0.2em;
+  margin-top: 0;
+  margin-bottom: 0.1em;
 }
 
 .markdown-body li > p {
-  margin-bottom: 0.3em;
+  margin-top: 0;
+  margin-bottom: 0.15em;
+}
+
+/* Nested lists - even tighter */
+.markdown-body li ul,
+.markdown-body li ol {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+.markdown-body li li {
+  margin-bottom: 0.05em;
 }
 
 /* Images */
