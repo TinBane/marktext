@@ -1,5 +1,17 @@
 # Steps to release MarkText
 
+## Prerequisites
+
+- Ensure macOS code signing is configured (see [MACOS_CODE_SIGNING.md](./MACOS_CODE_SIGNING.md))
+- Required GitHub secrets for macOS signing:
+  - `MAC_CERTIFICATE_BASE64`
+  - `MAC_CERTIFICATE_PASSWORD`
+  - `APPLE_ID`
+  - `APPLE_APP_SPECIFIC_PASSWORD`
+  - `APPLE_TEAM_ID`
+
+## Release Process
+
 - Create a release candidate
   - Create branch `release-v%version%`
   - Set environment variable `MARKTEXT_IS_STABLE` to `1` (default on AppVeyor and Travis CI)

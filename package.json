@@ -89,6 +89,7 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
+    "@electron/notarize": "^2.2.0",
     "@babel/core": "^7.17.9",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
