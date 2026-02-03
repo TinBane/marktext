@@ -1,14 +1,15 @@
 <template>
   <div class="command-palette">
     <el-dialog
-      :visible.sync="showCommandPalette"
+      v-model="showCommandPalette"
       :show-close="false"
       :modal="true"
       @close="handleDialogClose"
       custom-class="ag-dialog-table"
       width="500px"
     >
-      <div slot="title" class="search-wrapper">
+      <template #header>
+      <div class="search-wrapper">
         <div class="input-wrapper">
           <input
             ref="search"
@@ -44,6 +45,7 @@
           </ul>
         </transition>
       </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -80,7 +82,7 @@ export default {
       bus.$on('show-command-palette', this.handleShow)
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     bus.$off('show-command-palette', this.handleShow)
   },
   methods: {
@@ -374,7 +376,7 @@ export default {
   .fade-enter-active, .fade-leave-active {
     transition: opacity .2s;
   }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  .fade-enter-from, .fade-leave-to {
     opacity: 0;
   }
 </style>

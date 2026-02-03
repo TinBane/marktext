@@ -1,7 +1,7 @@
 <template>
   <div class="print-settings-dialog">
     <el-dialog
-      :visible.sync="showExportSettingsDialog"
+      v-model="showExportSettingsDialog"
       :show-close="false"
       :modal="true"
       custom-class="ag-dialog-table"
@@ -292,13 +292,30 @@ export default {
     })
   },
   created () {
+    console.log('[ExportSettings] Component created')
     bus.$on('showExportDialog', this.showDialog)
   },
-  beforeDestroy () {
+  mounted () {
+    console.log('[ExportSettings] Component mounted')
+    // Debug: Check if el-tabs elements exist after mount
+    this.$nextTick(() => {
+      const tabsHeader = document.querySelector('.el-tabs__header')
+      const tabsNav = document.querySelector('.el-tabs__nav')
+      const tabsItems = document.querySelectorAll('.el-tabs__item')
+      console.log('[ExportSettings] el-tabs__header:', tabsHeader)
+      console.log('[ExportSettings] el-tabs__nav:', tabsNav)
+      console.log('[ExportSettings] el-tabs__item count:', tabsItems.length)
+      if (tabsHeader) {
+        console.log('[ExportSettings] tabsHeader computed style:', window.getComputedStyle(tabsHeader))
+      }
+    })
+  },
+  beforeUnmount () {
     bus.$off('showExportDialog', this.showDialog)
   },
   methods: {
     showDialog (type) {
+      console.log('[ExportSettings] showDialog called with type:', type)
       this.exportType = type
       this.isPrintable = type !== 'styledHtml'
       if (!this.isPrintable && (this.activeName === 'header' || this.activeName === 'page')) {
@@ -306,7 +323,45 @@ export default {
       }
 
       this.showExportSettingsDialog = true
+      console.log('[ExportSettings] showExportSettingsDialog set to true, activeName:', this.activeName)
       bus.$emit('editor-blur')
+
+      // Debug: Check tabs DOM after dialog opens
+      this.$nextTick(() => {
+        console.log('[ExportSettings] Dialog opened - checking tabs DOM')
+        const dialog = document.querySelector('.print-settings-dialog .el-dialog')
+        const tabs = document.querySelector('.print-settings-dialog .el-tabs')
+        const tabsHeader = document.querySelector('.print-settings-dialog .el-tabs__header')
+        const tabsNav = document.querySelector('.print-settings-dialog .el-tabs__nav')
+        const tabsItems = document.querySelectorAll('.print-settings-dialog .el-tabs__item')
+        const tabPanes = document.querySelectorAll('.print-settings-dialog .el-tab-pane')
+
+        console.log('[ExportSettings] Dialog element:', dialog)
+        console.log('[ExportSettings] el-tabs:', tabs)
+        console.log('[ExportSettings] el-tabs__header:', tabsHeader)
+        console.log('[ExportSettings] el-tabs__nav:', tabsNav)
+        console.log('[ExportSettings] el-tabs__item count:', tabsItems.length)
+        console.log('[ExportSettings] el-tab-pane count:', tabPanes.length)
+
+        if (tabs) {
+          console.log('[ExportSettings] tabs innerHTML preview:', tabs.innerHTML.substring(0, 500))
+        }
+        if (tabsHeader) {
+          const style = window.getComputedStyle(tabsHeader)
+          console.log('[ExportSettings] tabsHeader display:', style.display)
+          console.log('[ExportSettings] tabsHeader visibility:', style.visibility)
+          console.log('[ExportSettings] tabsHeader height:', style.height)
+        }
+
+        // Log all Element Plus related elements
+        const allElElements = document.querySelectorAll('.print-settings-dialog [class*="el-"]')
+        console.log('[ExportSettings] All el-* elements in dialog:', allElElements.length)
+        allElElements.forEach((el, i) => {
+          if (i < 20) { // Limit logging
+            console.log(`[ExportSettings]   ${i}: ${el.className}`)
+          }
+        })
+      })
 
       if (!this.themesLoaded) {
         this.themesLoaded = true

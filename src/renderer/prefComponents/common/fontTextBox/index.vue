@@ -12,8 +12,10 @@
       placeholder="Select font..."
       @select="handleSelect"
     >
-      <i class="el-icon-arrow-down el-input__icon" slot="suffix"></i>
-      <template slot-scope="{ item }">
+      <template #suffix>
+        <i class="el-icon-arrow-down el-input__icon"></i>
+      </template>
+      <template #default="{ item }">
         <div class="family">{{ item }}</div>
       </template>
     </el-autocomplete>
@@ -149,6 +151,17 @@ export default {
     background: transparent;
     color: var(--editorColor);
     border-color: var(--editorColor10);
+  }
+  /* Element Plus uses .el-input__wrapper */
+  & .el-input__wrapper {
+    background: transparent;
+    box-shadow: 0 0 0 1px var(--editorColor10) inset;
+  }
+  & .el-input__wrapper input {
+    color: var(--editorColor);
+  }
+  & .el-input__wrapper.is-focus {
+    box-shadow: 0 0 0 1px var(--themeColor) inset;
   }
   & .el-input.is-active .el-input__inner,
   & .el-input__inner:focus {

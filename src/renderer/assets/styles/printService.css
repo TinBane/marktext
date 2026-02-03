@@ -13,6 +13,7 @@ body article.print-container {
   /* Set all settings like margin with @page or Electron settings. */
   @page {
     margin: 15mm 20mm 15mm 20mm;
+    background-color: #ffffff;
   }
 
   .editor-container {
@@ -26,6 +27,8 @@ body article.print-container {
     display: block !important;
     height: auto !important;
     background: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
     overflow: hidden;
   }
 

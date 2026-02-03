@@ -13,6 +13,7 @@ const getEnvironmentDefinitions = function () {
   }
 
   const isStableRelease = !!process.env.MARKTEXT_IS_STABLE
+  const isDebug = process.env.MARKTEXT_DEBUG === 'true'
   const versionSuffix = isStableRelease ? '' : ` (${shortHash})`
   return {
     'global.MARKTEXT_GIT_SHORT_HASH': JSON.stringify(shortHash),
@@ -20,15 +21,20 @@ const getEnvironmentDefinitions = function () {
 
     'global.MARKTEXT_VERSION': JSON.stringify(version),
     'global.MARKTEXT_VERSION_STRING': JSON.stringify(`v${version}${versionSuffix}`),
-    'global.MARKTEXT_IS_STABLE': JSON.stringify(isStableRelease)
+    'global.MARKTEXT_IS_STABLE': JSON.stringify(isStableRelease),
+    // Pass debug flag to main process (use different name to avoid conflict with runtime assignment in env.js)
+    'global.MARKTEXT_DEBUG_BUILD': JSON.stringify(isDebug)
   }
 }
 
 const getRendererEnvironmentDefinitions = function () {
   const env = getEnvironmentDefinitions()
+  const isDebug = process.env.MARKTEXT_DEBUG === 'true'
   return {
     'process.versions.MARKTEXT_VERSION': env['global.MARKTEXT_VERSION'],
     'process.versions.MARKTEXT_VERSION_STRING': env['global.MARKTEXT_VERSION_STRING'],
+    // Pass debug flag to renderer process
+    'process.env.MARKTEXT_DEBUG': JSON.stringify(isDebug ? 'true' : 'false')
   }
 }
 

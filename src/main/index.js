@@ -10,13 +10,27 @@ import Accessor from './app/accessor'
 import setupEnvironment from './app/env'
 import { getLogLevel } from './utils'
 
+// Set global debug flag from environment or compiled-in flag
+// global.MARKTEXT_DEBUG_BUILD is set by webpack DefinePlugin if built with MARKTEXT_DEBUG=true
+if (process.env.MARKTEXT_DEBUG === 'true' || global.MARKTEXT_DEBUG_BUILD) {
+  global.MARKTEXT_DEBUG = true
+  console.log('[DEBUG] Debug mode enabled')
+}
+
 const initializeLogger = appEnvironment => {
-  log.transports.console.level = process.env.NODE_ENV === 'development' ? 'info' : 'error'
+  // Enable info level console logging in development OR when MARKTEXT_DEBUG is set
+  const isDebug = process.env.NODE_ENV === 'development' || process.env.MARKTEXT_DEBUG === 'true'
+  log.transports.console.level = isDebug ? 'info' : 'error'
   log.transports.rendererConsole = null
   log.transports.file.resolvePath = () => path.join(appEnvironment.paths.logPath, 'main.log')
-  log.transports.file.level = getLogLevel()
+  log.transports.file.level = isDebug ? 'info' : getLogLevel()
   log.transports.file.sync = true
   initExceptionLogger()
+
+  if (isDebug) {
+    log.info('[DEBUG] Debug logging enabled')
+    log.info('[DEBUG] Log path:', appEnvironment.paths.logPath)
+  }
 }
 
 // -----------------------------------------------

@@ -41,7 +41,8 @@ export const defaultFileState = {
 
 export const getOptionsFromState = file => {
   const { encoding, lineEnding, adjustLineEndingOnSave, trimTrailingNewline } = file
-  return { encoding, lineEnding, adjustLineEndingOnSave, trimTrailingNewline }
+  // Use JSON serialization to strip Vue 3 reactive Proxies for IPC compatibility
+  return JSON.parse(JSON.stringify({ encoding, lineEnding, adjustLineEndingOnSave, trimTrailingNewline }))
 }
 
 export const getFileStateFromData = data => {

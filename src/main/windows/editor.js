@@ -76,6 +76,13 @@ class EditorWindow extends BaseWindow {
       winOptions.webPreferences.spellcheck = false
     }
 
+    // Add preload script to expose Node.js APIs
+    // In dev mode, __dirname is in dist/electron, so we need to go up to src/main
+    const preloadPath = process.env.NODE_ENV === 'development'
+      ? path.resolve(__dirname, '../../src/main/preload.js')
+      : path.join(__dirname, 'preload.js')
+    winOptions.webPreferences.preload = preloadPath
+
     let win = this.browserWindow = new BrowserWindow(winOptions)
     remoteEnable(win.webContents)
     this.id = win.id
@@ -98,6 +105,12 @@ class EditorWindow extends BaseWindow {
     win.webContents.once('did-finish-load', () => {
       this.lifecycle = WindowLifecycle.READY
       this.emit('window-ready')
+
+      // Open DevTools automatically in debug mode
+      if (global.MARKTEXT_DEBUG || global.MARKTEXT_DEBUG_BUILD) {
+        win.webContents.openDevTools({ mode: 'detach' })
+        log.info('[DEBUG] DevTools opened automatically')
+      }
 
       // Restore and focus window
       this.bringToFront()

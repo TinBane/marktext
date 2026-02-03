@@ -85,9 +85,20 @@ export default {
     color: var(--editorColor);
     border-color: var(--editorColor10);
   }
+  /* Element Plus uses .el-input__wrapper */
+  & .el-input__wrapper {
+    background: transparent;
+    box-shadow: 0 0 0 1px var(--editorColor10) inset;
+  }
+  & .el-input__wrapper input {
+    color: var(--editorColor);
+  }
   & .el-input__icon,
   & .el-input__inner {
     line-height: 30px;
+  }
+  & .el-select__suffix {
+    color: var(--editorColor50);
   }
 }
 .pref-select-item .description {

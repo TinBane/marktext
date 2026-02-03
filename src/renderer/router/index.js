@@ -1,3 +1,4 @@
+import { createRouter, createWebHashHistory } from 'vue-router'
 import App from '@/pages/app'
 import Preference from '@/pages/preference'
 import General from '@/prefComponents/general'
@@ -16,7 +17,7 @@ const parseSettingsPage = type => {
   return pageUrl
 }
 
-const routes = type => ([{
+const getRoutes = type => ([{
   path: '/', redirect: type === 'editor' ? '/editor' : parseSettingsPage(type)
 }, {
   path: '/editor', component: App
@@ -42,4 +43,12 @@ const routes = type => ([{
   }]
 }])
 
-export default routes
+export function createAppRouter (type) {
+  return createRouter({
+    history: createWebHashHistory(),
+    routes: getRoutes(type)
+  })
+}
+
+// Keep backward compatible export for migration period
+export default getRoutes

@@ -195,9 +195,29 @@ body {
   padding: 8px 6px;
 }
 
+.el-dialog__body {
+  color: var(--editorColor);
+}
+
+.el-dialog__body h3 {
+  color: var(--editorColor80);
+  margin: 0 0 16px 0;
+  font-size: 18px;
+}
+
 input.el-input__inner {
   background: var(--inputBgColor);
   border: 1px solid var(--editorColor10);
+  color: var(--editorColor80);
+}
+
+/* Element Plus uses .el-input__wrapper instead of styling .el-input__inner directly */
+.el-input__wrapper {
+  background: var(--inputBgColor);
+  box-shadow: 0 0 0 1px var(--editorColor10) inset;
+}
+
+.el-input__wrapper input {
   color: var(--editorColor80);
 }
 
@@ -214,6 +234,60 @@ input.el-input__inner {
 
 .el-tabs__nav-wrap::after {
   background: var(--editorColor04);
+}
+
+/* Element Plus tabs styling */
+.el-tabs {
+  --el-tabs-header-height: 40px;
+}
+
+.el-tabs__header {
+  display: flex !important;
+  visibility: visible !important;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--editorColor10);
+}
+
+.el-tabs__header.is-top {
+  display: flex !important;
+}
+
+.el-tabs__nav-wrap {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+.el-tabs__nav-scroll {
+  display: flex !important;
+}
+
+.el-tabs__nav {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+.el-tabs__item {
+  display: inline-flex !important;
+  visibility: visible !important;
+  color: #9da5b4 !important;  /* Explicit light gray color for dark themes */
+  font-size: 14px;
+  padding: 0 15px;
+  height: 36px;
+  line-height: 36px;
+  cursor: pointer;
+  background: transparent !important;
+}
+
+.el-tabs__item:hover {
+  color: #d7dae0 !important;  /* Lighter on hover */
+}
+
+.el-tabs__item.is-active {
+  color: #4d78cc !important;  /* Theme color for active tab */
+}
+
+.el-tabs__active-bar {
+  background-color: var(--themeColor);
 }
 
 div.el-tabs__item {

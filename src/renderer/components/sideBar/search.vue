@@ -320,7 +320,7 @@ export default {
       this.keyword = this.searchMatches.value
     }
   },
-  destroyed () {
+  unmounted () {
     bus.$off('findInFolder', this.handleFindInFolder)
   }
 }

@@ -126,12 +126,19 @@ function startMain () {
 }
 
 function startElectron () {
+  // Pass debug environment variable to electron process
+  const env = { ...process.env }
+  if (process.env.MARKTEXT_DEBUG) {
+    env.MARKTEXT_DEBUG = process.env.MARKTEXT_DEBUG
+    console.log(chalk.green.bold('[DEBUG] MARKTEXT_DEBUG enabled - DevTools will open automatically'))
+  }
+
   electronProcess = spawn(electron, [
     '--inspect=5858',
     '--remote-debugging-port=8315',
     '--nolazy',
     path.join(__dirname, '../dist/electron/main.js')
-  ])
+  ], { env })
 
   electronProcess.stdout.on('data', data => {
     electronLog(data, 'blue')

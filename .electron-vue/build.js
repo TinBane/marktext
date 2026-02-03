@@ -2,6 +2,12 @@
 
 process.env.NODE_ENV = 'production'
 
+// Preserve debug flag from environment
+const isDebugBuild = process.env.MARKTEXT_DEBUG === 'true'
+if (isDebugBuild) {
+  console.log('\n  [DEBUG BUILD] Building with debug features enabled\n')
+}
+
 const { say } = require('cfonts')
 const path = require('path')
 const chalk = require('chalk')

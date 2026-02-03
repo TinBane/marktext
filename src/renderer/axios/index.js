@@ -1,10 +1,10 @@
 import axios from 'axios'
-import adapter from 'axios/lib/adapters/http'
 
-axios.defaults.adapter = adapter
+// Force Node.js http adapter in Electron renderer process
+axios.defaults.adapter = 'http'
 
 const http = axios.create({
-  adapter
+  adapter: 'http'
 })
 
 export default http

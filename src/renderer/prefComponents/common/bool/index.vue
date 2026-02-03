@@ -113,4 +113,14 @@ export default {
   .el-switch:not(.is-checked) .el-switch__core::after {
     background: var(--iconColor);
   }
+
+  /* Element Plus switch action element */
+  .el-switch:not(.is-checked) .el-switch__action {
+    background: var(--iconColor);
+  }
+
+  .el-switch.is-checked .el-switch__core {
+    border-color: var(--themeColor);
+    background-color: var(--themeColor);
+  }
 </style>

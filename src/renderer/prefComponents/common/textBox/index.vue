@@ -114,6 +114,20 @@ export default {
         color: var(--editorColor30);
       }
     }
+    /* Element Plus uses .el-input__wrapper */
+    & .el-input__wrapper {
+      background: transparent;
+      box-shadow: 0 0 0 1px var(--editorColor10) inset;
+    }
+    & .el-input__wrapper input {
+      color: var(--editorColor);
+      &::placeholder {
+        color: var(--editorColor30);
+      }
+    }
+    & .el-input__wrapper.is-focus {
+      box-shadow: 0 0 0 1px var(--themeColor) inset;
+    }
     & .notes {
       margin-top: 10px;
       font-style: italic;

@@ -61,10 +61,39 @@
         }
       }
     </style>
+    <!-- Polyfill Node.js globals when not available -->
+    <script>
+      // Define global variables for browser compatibility (must be var, not const/let, to be truly global)
+      if (typeof global === 'undefined') {
+        var global = window.globalThis || window;
+        window.global = global;
+      }
+      if (typeof process === 'undefined') {
+        var process = {
+          env: { NODE_ENV: '<%= htmlWebpackPlugin.options.isDevelopment ? "development" : "production" %>' },
+          platform: 'darwin',
+          versions: { MARKTEXT_VERSION_STRING: '0.17.1' },
+          cwd: function() { return '/'; },
+          nextTick: function(fn) { setTimeout(fn, 0); }
+        };
+        window.process = process;
+      }
+      if (typeof Buffer === 'undefined') {
+        // Minimal Buffer polyfill for code that checks for Buffer existence
+        var Buffer = { isBuffer: function() { return false; } };
+        window.Buffer = Buffer;
+      }
+    </script>
     <% if (htmlWebpackPlugin.options.nodeModules) { %>
       <!-- Add `node_modules/` to global paths so `require` works properly in development -->
       <script>
-        require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')
+        try {
+          if (typeof require !== 'undefined') {
+            require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')
+          }
+        } catch (e) {
+          console.warn('[Bootstrap] Node.js require not available');
+        }
       </script>
     <% } %>
   </head>

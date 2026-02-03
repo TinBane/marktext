@@ -7,7 +7,7 @@ const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const { VueLoaderPlugin } = require('vue-loader')
 const SpritePlugin = require('svg-sprite-loader/plugin')
 const postcssPresetEnv = require('postcss-preset-env')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
@@ -23,7 +23,22 @@ const isProduction = process.env.NODE_ENV === 'production'
  * that provide pure *.vue files that need compiling
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/webpack-configurations.html#white-listing-externals
  */
-const whiteListedModules = ['vue']
+const whiteListedModules = [
+  'vue',
+  '@vue/compat',
+  'vue-router',
+  'pinia',
+  'vuex',
+  'element-plus',
+  '@element-plus/icons-vue',
+  'mitt',
+  'events',
+  'buffer',
+  'util',
+  'stream-browserify',
+  'path-browserify',
+  'assert'
+]
 
 /** @type {import('webpack').Configuration} */
 const rendererConfig = {
@@ -187,13 +202,19 @@ const rendererConfig = {
         ? path.resolve(__dirname, '../node_modules')
         : false
     }),
-    new webpack.DefinePlugin(getRendererEnvironmentDefinitions()),
-    // Use node http request instead axios's XHR adapter.
-    new webpack.NormalModuleReplacementPlugin(
-      /.+[\/\\]node_modules[\/\\]axios[\/\\]lib[\/\\]adapters[\/\\]xhr\.js$/,
-      'http.js'
-    ),
-    new VueLoaderPlugin()
+    new webpack.DefinePlugin({
+      ...getRendererEnvironmentDefinitions(),
+      // Vue 3 feature flags required by Vue 3 and Vuex 4
+      '__VUE_OPTIONS_API__': true,
+      // Enable Vue DevTools even in production for debugging
+      '__VUE_PROD_DEVTOOLS__': process.env.MARKTEXT_DEBUG === 'true',
+      '__VUE_PROD_HYDRATION_MISMATCH_DETAILS__': process.env.MARKTEXT_DEBUG === 'true'
+    }),
+    new VueLoaderPlugin(),
+    // Provide global variable for libraries that expect it
+    new webpack.ProvidePlugin({
+      global: 'globalThis'
+    })
   ],
   cache: false,
   output: {
@@ -210,9 +231,18 @@ const rendererConfig = {
       'common': path.join(__dirname, '../src/common'),
       'muya': path.join(__dirname, '../src/muya'),
       snapsvg: path.join(__dirname, '../src/muya/lib/assets/libs/snap.svg-min.js'),
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue': '@vue/compat'
     },
-    extensions: ['.js', '.vue', '.json', '.css', '.node']
+    extensions: ['.js', '.vue', '.json', '.css', '.node'],
+    // Fallbacks for Node.js built-in modules when nodeIntegration is unavailable
+    fallback: {
+      events: require.resolve('events'),
+      buffer: require.resolve('buffer'),
+      util: require.resolve('util'),
+      stream: require.resolve('stream-browserify'),
+      path: require.resolve('path-browserify'),
+      assert: require.resolve('assert')
+    }
   },
   target: 'electron-renderer'
 }

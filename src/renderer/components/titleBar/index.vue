@@ -44,7 +44,7 @@
           :content="`${wordCount[show]} ${HASH[show].full + (wordCount[show] > 1 ? 's' : '')}`"
           placement="bottom-end"
         >
-          <div slot="content">
+          <template #content>
             <div class="title-item">
               <span class="front">Words:</span><span class="text">{{wordCount['word']}}</span>
             </div>
@@ -54,7 +54,7 @@
             <div class="title-item">
               <span class="front">Paragraphs:</span><span class="text">{{wordCount['paragraph']}}</span>
             </div>
-          </div>
+          </template>
           <div
             v-if="wordCount"
             class="word-count"
@@ -238,7 +238,7 @@ export default {
       this.isFullScreen = false
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     ipcRenderer.off('window-maximize', this.onMaximize)
     ipcRenderer.off('window-unmaximize', this.onUnmaximize)
     ipcRenderer.off('window-enter-full-screen', this.onEnterFullScreen)

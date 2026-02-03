@@ -110,6 +110,7 @@ export default {
     }
   },
   created () {
+    console.log('[DEBUG] app.vue created() hook called')
     const { commit, dispatch } = this.$store
 
     // Apply initial state (theme and titleBarStyle) and delay load other values.

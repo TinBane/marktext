@@ -2,14 +2,15 @@
   <div class="key-input-dialog">
     <div v-if="showKeyInputDialog" class="input-overlay"></div>
     <el-dialog
-      :visible.sync="showKeyInputDialog"
+      v-model="showKeyInputDialog"
       :show-close="false"
       :modal="false"
       @close="cancelKeybinding"
       custom-class="ag-dialog-table"
       width="350px"
     >
-      <div slot="title" class="key-input-wrapper">
+      <template #header>
+      <div class="key-input-wrapper">
         <div class="input-wrapper">
           <input
             tabindex="0"
@@ -32,6 +33,7 @@
           </div>
         </div>
       </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -203,7 +205,7 @@ export default {
   .fade-enter-active, .fade-leave-active {
     transition: opacity .2s;
   }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  .fade-enter-from, .fade-leave-to {
     opacity: 0;
   }
 

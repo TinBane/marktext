@@ -408,7 +408,8 @@ const actions = {
     const options = getOptionsFromState(file)
 
     // Save the file content via main process and send a close tab response.
-    ipcRenderer.send('mt::save-and-close-tabs', [{ id, pathname, filename, markdown, options }])
+    // Use JSON serialization to strip Vue 3 reactive Proxies for IPC compatibility
+    ipcRenderer.send('mt::save-and-close-tabs', JSON.parse(JSON.stringify([{ id, pathname, filename, markdown, options }])))
   },
 
   // need pass some data to main process when `save` menu item clicked
@@ -418,14 +419,15 @@ const actions = {
       const options = getOptionsFromState(state.currentFile)
       const defaultPath = getRootFolderFromState(rootState)
       if (id) {
-        ipcRenderer.send('mt::response-file-save', {
+        // Use JSON serialization to strip Vue 3 reactive Proxies for IPC compatibility
+        ipcRenderer.send('mt::response-file-save', JSON.parse(JSON.stringify({
           id,
           filename,
           pathname,
           markdown,
           options,
           defaultPath
-        })
+        })))
       }
     })
   },
@@ -437,14 +439,15 @@ const actions = {
       const options = getOptionsFromState(state.currentFile)
       const defaultPath = getRootFolderFromState(rootState)
       if (id) {
-        ipcRenderer.send('mt::response-file-save-as', {
+        // Use JSON serialization to strip Vue 3 reactive Proxies for IPC compatibility
+        ipcRenderer.send('mt::response-file-save-as', JSON.parse(JSON.stringify({
           id,
           filename,
           pathname,
           markdown,
           options,
           defaultPath
-        })
+        })))
       }
     })
   },
@@ -510,7 +513,8 @@ const actions = {
         })
 
       if (unsavedFiles.length) {
-        ipcRenderer.send('mt::close-window-confirm', unsavedFiles)
+        // Use JSON serialization to strip Vue 3 reactive Proxies for IPC compatibility
+        ipcRenderer.send('mt::close-window-confirm', JSON.parse(JSON.stringify(unsavedFiles)))
       } else {
         ipcRenderer.send('mt::close-window')
       }
@@ -538,12 +542,14 @@ const actions = {
     if (closeTabs) {
       if (unsavedFiles.length) {
         commit('CLOSE_TABS', tabs.filter(f => f.isSaved).map(f => f.id))
-        ipcRenderer.send('mt::save-and-close-tabs', unsavedFiles)
+        // Use JSON serialization to strip Vue 3 reactive Proxies for IPC compatibility
+        ipcRenderer.send('mt::save-and-close-tabs', JSON.parse(JSON.stringify(unsavedFiles)))
       } else {
         commit('CLOSE_TABS', tabs.map(f => f.id))
       }
     } else {
-      ipcRenderer.send('mt::save-tabs', unsavedFiles)
+      // Use JSON serialization to strip Vue 3 reactive Proxies for IPC compatibility
+      ipcRenderer.send('mt::save-tabs', JSON.parse(JSON.stringify(unsavedFiles)))
     }
   },
 
@@ -616,6 +622,7 @@ const actions = {
 
   // This events are only used during window creation.
   LISTEN_FOR_BOOTSTRAP_WINDOW ({ commit, state, dispatch, rootState }) {
+    console.log('[DEBUG] LISTEN_FOR_BOOTSTRAP_WINDOW action called')
     // Delay load runtime commands and initialize commands.
     setTimeout(() => {
       bus.$emit('cmd::register-command', new FileEncodingCommand(rootState.editor))
@@ -630,6 +637,7 @@ const actions = {
     }, 400)
 
     ipcRenderer.on('mt::bootstrap-editor', (e, config) => {
+      console.log('[DEBUG] Received mt::bootstrap-editor event', config)
       const {
         addBlankTab,
         markdownList,
@@ -639,6 +647,7 @@ const actions = {
         sourceCodeModeEnabled
       } = config
 
+      console.log('[DEBUG] Dispatching SEND_INITIALIZED')
       dispatch('SEND_INITIALIZED')
       commit('SET_USER_PREFERENCE', { endOfLine: lineEnding })
       commit('SET_LAYOUT', {
@@ -1059,14 +1068,15 @@ const actions = {
     }
 
     const { filename, pathname } = state.currentFile
-    ipcRenderer.send('mt::response-export', {
+    // Use JSON serialization to strip Vue 3 reactive Proxies for IPC compatibility
+    ipcRenderer.send('mt::response-export', JSON.parse(JSON.stringify({
       type,
       title,
       content,
       filename,
       pathname,
       pageOptions
-    })
+    })))
   },
 
   LINTEN_FOR_EXPORT_SUCCESS ({ commit }) {
