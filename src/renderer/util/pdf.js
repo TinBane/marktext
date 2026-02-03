@@ -5,6 +5,7 @@ import { isFile } from 'common/filesystem'
 import { escapeHTML, unescapeHTML } from 'muya/lib/utils'
 import academicTheme from '@/assets/themes/export/academic.theme.css'
 import liberTheme from '@/assets/themes/export/liber.theme.css'
+import latoPrintTheme from '@/assets/themes/export/lato-print.theme.css'
 import { cloneObj } from '../util'
 import { sanitize, EXPORT_DOMPURIFY_CONFIG } from '../util/dompurify'
 
@@ -60,6 +61,8 @@ export const getCssForOptions = options => {
       output += academicTheme
     } else if (theme === 'liber') {
       output += liberTheme
+    } else if (theme === 'lato-print') {
+      output += latoPrintTheme
     } else {
       // Read theme from disk
       const { userDataPath } = global.marktext.paths
