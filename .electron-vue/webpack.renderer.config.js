@@ -302,10 +302,6 @@ if (isProduction) {
           globOptions: {
             ignore: ['.*']
           }
-        },
-        {
-          from: path.resolve(__dirname, '../node_modules/codemirror/mode/*/*').replace(/\\/g, '/'),
-          to: path.join(__dirname, '../dist/electron/codemirror/mode/[name]/[name][ext]')
         }
       ]
     })

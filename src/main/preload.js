@@ -2,7 +2,7 @@
 // This runs in a context that has access to Node.js APIs
 // and can expose them to the renderer
 
-const { contextBridge, ipcRenderer } = require('electron')
+const { ipcRenderer } = require('electron')
 
 // Expose Node.js globals to the renderer
 window.require = require

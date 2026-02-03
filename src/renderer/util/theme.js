@@ -53,20 +53,8 @@ export const addThemeStyle = theme => {
     document.body.classList.add('dark')
   }
 
-  // change CodeMirror theme
-  const cm = document.querySelector('.CodeMirror')
-  if (cm) {
-    cm.classList.remove('cm-s-default')
-    cm.classList.remove('cm-s-one-dark')
-    cm.classList.remove('cm-s-railscasts')
-    if (isCmOneDark) {
-      cm.classList.add('cm-s-one-dark')
-    } else if (isCmRailscasts) {
-      cm.classList.add('cm-s-railscasts')
-    } else {
-      cm.classList.add('cm-s-default')
-    }
-  }
+  // Note: CodeMirror 6 theme switching is handled by the sourceCode.vue component
+  // through the Vue reactivity system watching the theme preference
 }
 
 export const setEditorWidth = value => {
@@ -106,7 +94,7 @@ td code,
 th code,
 code,
 code[class*="language-"],
-.CodeMirror,
+.cm-editor,
 pre.ag-paragraph {
 font-family: ${codeFontFamily}, ${DEFAULT_CODE_FONT_FAMILY};
 font-size: ${codeFontSize}px;

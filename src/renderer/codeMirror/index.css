@@ -1,7 +1,20 @@
-.CodeMirror {
+/* CodeMirror 6 base styles for MarkText */
+.cm-editor {
   background: transparent;
   height: auto;
 }
-.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection {
+
+/* Selection styling for light mode */
+.cm-editor .cm-selectionBackground {
   background: rgb(178, 215, 254);
+}
+
+/* Line wrapping */
+.cm-editor .cm-line {
+  padding-left: 4px;
+}
+
+/* Cursor */
+.cm-editor .cm-cursor {
+  border-left-width: 2px;
 }
