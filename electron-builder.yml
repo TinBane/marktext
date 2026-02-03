@@ -71,11 +71,18 @@ mac:
   artifactName: "marktext-${arch}-mac.${ext}"
   icon: "resources/icons/icon.icns"
   darkModeSupport: true
+  # Code signing configuration
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: "resources/mac/entitlements.mac.plist"
+  entitlementsInherit: "resources/mac/entitlements.mac.inherit.plist"
   target:
     - target: dmg
       arch: [x64, arm64]
     - target: zip
       arch: [x64, arm64]
+# Notarization hook (runs after signing)
+afterSign: "resources/mac/notarize.js"
 dmg:
   artifactName: "marktext-${arch}.${ext}"
   contents:
