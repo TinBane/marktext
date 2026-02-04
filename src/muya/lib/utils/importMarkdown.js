@@ -66,6 +66,21 @@ const turnSoftBreakToSpan = html => {
   return root.innerHTML.trim()
 }
 
+/**
+ * Fix table spacing by inserting blank lines before tables that are missing them.
+ * Tables require a blank line before them to be parsed correctly.
+ * @param {string} markdown - The raw markdown string
+ * @returns {string} - Markdown with fixed table spacing
+ */
+const fixTableSpacing = (markdown) => {
+  // Pattern matches:
+  // 1. A non-newline character followed by single newline (no blank line)
+  // 2. Followed by a table header (line with pipes)
+  // 3. Followed by alignment row (dashes with optional colons and pipes)
+  const tablePattern = /([^\n])\n((?:\|[^\n]+|\S[^\n]*\|[^\n]*)\n[ ]{0,3}\|?[ ]*[-:]+[-| :]*(?:\n|$))/g
+  return markdown.replace(tablePattern, '$1\n\n$2')
+}
+
 const importRegister = ContentState => {
   // turn markdown to blocks
   ContentState.prototype.markdownToState = function (markdown) {
@@ -83,15 +98,22 @@ const importRegister = ContentState => {
       footnote,
       isGitlabCompatibilityEnabled,
       superSubScript,
-      trimUnnecessaryCodeBlockEmptyLines
+      trimUnnecessaryCodeBlockEmptyLines,
+      autoFixTableSpacing
     } = this.muya.options
+
+    // Apply table spacing fix before lexing
+    let processedMarkdown = markdown
+    if (autoFixTableSpacing) {
+      processedMarkdown = fixTableSpacing(markdown)
+    }
 
     const tokens = new Lexer({
       disableInline: true,
       footnote,
       isGitlabCompatibilityEnabled,
       superSubScript
-    }).lex(markdown)
+    }).lex(processedMarkdown)
 
     let token
     let block

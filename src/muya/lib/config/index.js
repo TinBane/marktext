@@ -255,6 +255,8 @@ export const MUYA_DEFAULT_OPTION = Object.freeze({
   markdown: '',
   // Whether to trim the beginning and ending empty line in code block when open markdown.
   trimUnnecessaryCodeBlockEmptyLines: false,
+  // Whether to auto-insert blank line before tables that are missing one.
+  autoFixTableSpacing: false,
   preferLooseListItem: true,
   autoPairBracket: true,
   autoPairMarkdownSyntax: true,

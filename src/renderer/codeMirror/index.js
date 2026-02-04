@@ -15,6 +15,9 @@ import { oneDark } from './themes/one-dark'
 import { railscasts } from './themes/railscasts'
 import languageMappings from './modes'
 
+// Import base styles for CodeMirror 6
+import './index.css'
+
 // Re-export themes
 export { oneDark } from './themes/one-dark'
 export { railscasts } from './themes/railscasts'

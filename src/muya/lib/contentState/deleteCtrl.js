@@ -48,8 +48,10 @@ const deleteCtrl = ContentState => {
     ) {
       event.preventDefault()
       if (nextBlock && /h\d|span/.test(nextBlock.type)) {
-        // if cursor at the end of code block-language input, do nothing!
-        if (nextBlock.functionType === 'codeContent' && startBlock.functionType === 'languageInput') {
+        // Prevent merging code blocks, table cells, and language inputs with other blocks.
+        // These block types have special structure that should not be merged.
+        const protectedTypes = ['codeContent', 'cellContent', 'languageInput', 'footnoteInput']
+        if (protectedTypes.includes(startBlock.functionType) || protectedTypes.includes(nextBlock.functionType)) {
           return
         }
 

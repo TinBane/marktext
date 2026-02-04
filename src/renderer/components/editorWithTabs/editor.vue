@@ -154,6 +154,7 @@ export default {
       codeFontFamily: state => state.preferences.codeFontFamily,
       codeBlockLineNumbers: state => state.preferences.codeBlockLineNumbers,
       trimUnnecessaryCodeBlockEmptyLines: state => state.preferences.trimUnnecessaryCodeBlockEmptyLines,
+      autoFixTableSpacing: state => state.preferences.autoFixTableSpacing,
       editorFontFamily: state => state.preferences.editorFontFamily,
       hideQuickInsertHint: state => state.preferences.hideQuickInsertHint,
       hideLinkPopup: state => state.preferences.hideLinkPopup,
@@ -346,6 +347,13 @@ export default {
       }
     },
 
+    autoFixTableSpacing: function (value, oldValue) {
+      const { editor } = this
+      if (value !== oldValue && editor) {
+        editor.setOptions({ autoFixTableSpacing: value })
+      }
+    },
+
     bulletListMarker: function (value, oldValue) {
       const { editor } = this
       if (value !== oldValue && editor) {
@@ -468,6 +476,7 @@ export default {
         autoPairMarkdownSyntax,
         autoPairQuote,
         trimUnnecessaryCodeBlockEmptyLines,
+        autoFixTableSpacing,
         bulletListMarker,
         orderListDelimiter,
         tabSize,
@@ -517,6 +526,7 @@ export default {
         autoPairBracket,
         autoPairMarkdownSyntax,
         trimUnnecessaryCodeBlockEmptyLines,
+        autoFixTableSpacing,
         autoPairQuote,
         bulletListMarker,
         orderListDelimiter,

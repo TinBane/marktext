@@ -121,6 +121,11 @@
     "type": "boolean",
     "default": true
   },
+  "autoFixTableSpacing": {
+    "description": "Editor--Automatically insert blank line before tables when missing",
+    "type": "boolean",
+    "default": true
+  },
   "autoPairBracket": {
     "description": "Editor--Automatically brackets when editing",
     "type": "boolean",

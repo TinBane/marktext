@@ -75,6 +75,19 @@
 
     <compound>
       <template #head>
+        <h6 class="title">Table settings:</h6>
+      </template>
+      <template #children>
+        <bool
+          description="Automatically fix missing blank lines before tables"
+          :bool="autoFixTableSpacing"
+          :onChange="value => onSelectChange('autoFixTableSpacing', value)"
+        ></bool>
+      </template>
+    </compound>
+
+    <compound>
+      <template #head>
         <h6 class="title">Writing behavior:</h6>
       </template>
       <template #children>
@@ -214,6 +227,7 @@ export default {
       codeFontFamily: state => state.preferences.codeFontFamily,
       codeBlockLineNumbers: state => state.preferences.codeBlockLineNumbers,
       trimUnnecessaryCodeBlockEmptyLines: state => state.preferences.trimUnnecessaryCodeBlockEmptyLines,
+      autoFixTableSpacing: state => state.preferences.autoFixTableSpacing,
       hideQuickInsertHint: state => state.preferences.hideQuickInsertHint,
       hideLinkPopup: state => state.preferences.hideLinkPopup,
       autoCheck: state => state.preferences.autoCheck,

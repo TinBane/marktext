@@ -37,7 +37,21 @@ const whiteListedModules = [
   'util',
   'stream-browserify',
   'path-browserify',
-  'assert'
+  'assert',
+  // CodeMirror 6 packages - must be bundled for source code mode to work in production
+  '@codemirror/autocomplete',
+  '@codemirror/commands',
+  '@codemirror/lang-markdown',
+  '@codemirror/language',
+  '@codemirror/language-data',
+  '@codemirror/state',
+  '@codemirror/view',
+  '@lezer/highlight',
+  '@lezer/common',
+  '@lezer/lr',
+  '@lezer/markdown',
+  'crelt',
+  'style-mod'
 ]
 
 /** @type {import('webpack').Configuration} */
