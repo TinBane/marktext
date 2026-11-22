@@ -1,5 +1,6 @@
 import { escapeHTML, unescapeHTML } from '@muyajs/core'
 import academicTheme from '@/assets/themes/export/academic.theme.css?inline'
+import latoPrintTheme from '@/assets/themes/export/lato-print.theme.css?inline'
 import liberTheme from '@/assets/themes/export/liber.theme.css?inline'
 import { deepClone } from '../util'
 import { sanitize, EXPORT_DOMPURIFY_CONFIG, TOC_DOMPURIFY_CONFIG } from '../util/dompurify'
@@ -59,6 +60,8 @@ export const getCssForOptions = async(options: PdfCssOptions): Promise<string> =
       output += academicTheme
     } else if (theme === 'liber') {
       output += liberTheme
+    } else if (theme === 'lato-print') {
+      output += latoPrintTheme
     } else {
       const { userDataPath } = window.marktext!.paths as { userDataPath: string }
       const themePath = window.path.join(userDataPath, 'themes/export', theme)

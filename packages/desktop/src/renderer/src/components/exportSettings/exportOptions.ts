@@ -72,6 +72,10 @@ export const getExportThemeList = (): PrefSelectOption<string>[] => [
     value: 'default'
   },
   {
+    label: t('exportSettings.options.themes.latoPrint'),
+    value: 'lato-print'
+  },
+  {
     label: t('exportSettings.options.themes.liber'),
     value: 'liber'
   }

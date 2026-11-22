@@ -44,9 +44,9 @@ describe('getCssForOptions', () => {
     w.window.fileUtils = { isFile: async() => false, readFile: async() => '' }
   })
 
-  it('academic/liber take the inline-theme branch (no disk access required)', async() => {
+  it('academic/liber/lato-print take the inline-theme branch (no disk access required)', async() => {
     const { getCssForOptions } = await loadPdf()
-    // Remove the disk surfaces entirely: if academic/liber tried a disk read
+    // Remove the disk surfaces entirely: if a built-in theme tried a disk read
     // these would throw. They must not.
     const w = globalThis as unknown as { window: Record<string, unknown> }
     delete w.window.marktext
@@ -54,6 +54,7 @@ describe('getCssForOptions', () => {
 
     await expect(getCssForOptions({ theme: 'academic' })).resolves.toBeTypeOf('string')
     await expect(getCssForOptions({ theme: 'liber' })).resolves.toBeTypeOf('string')
+    await expect(getCssForOptions({ theme: 'lato-print' })).resolves.toBeTypeOf('string')
   }, 20000)
 
   it('appends no theme CSS for theme:"default" (disk lookup misses) or {}', async() => {

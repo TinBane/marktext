@@ -400,6 +400,7 @@
       "themes": {
         "academic": "Academic",
         "default": "GitHub (predefinito)",
+        "latoPrint": "Lato Print",
         "liber": "Liber"
       }
     }

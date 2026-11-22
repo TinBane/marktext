@@ -400,6 +400,7 @@
       "themes": {
         "academic": "學術",
         "default": "GitHub（預設）",
+        "latoPrint": "Lato Print",
         "liber": "Liber"
       }
     }

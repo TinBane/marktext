@@ -400,6 +400,7 @@
       "themes": {
         "academic": "학술",
         "default": "GitHub (기본값)",
+        "latoPrint": "Lato Print",
         "liber": "Liber"
       }
     }
