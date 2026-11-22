@@ -135,13 +135,22 @@ nsis:
   include: windows/installer.nsh
 mac:
   artifactName: 'marktext-mac-${arch}-${version}.${ext}'
+  # Code signing: electron-builder signs with a Developer ID identity from the
+  # keychain, or from CSC_LINK / CSC_KEY_PASSWORD (base64 .p12 + password).
+  # With no identity available it skips signing and the build still succeeds.
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/mac/entitlements.mac.plist
   entitlementsInherit: build/mac/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   icon: static/icon.icns
-  notarize: false
+  # Notarization runs only when Apple credentials are in the environment:
+  # APPLE_ID + APPLE_APP_SPECIFIC_PASSWORD + APPLE_TEAM_ID (or APPLE_API_KEY /
+  # APPLE_KEYCHAIN_PROFILE). Without them electron-builder skips it.
+  # See docs/dev/MACOS_CODE_SIGNING.md.
   target:
     - dmg
     - zip

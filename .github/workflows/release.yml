@@ -119,16 +119,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Mac builds are unsigned (no Developer ID); see release notes for the
-      # user-side xattr/codesign workaround. Per-arch script: electron-builder's
-      # --arm64/--x64 flags are additive over the config's arch list, so
-      # electron-builder.yml must not pin mac.target arches for the flag to
-      # actually restrict the build to a single arch.
+      # Mac builds are signed and notarized when the signing secrets below are
+      # set; without them electron-builder skips both and the build is
+      # unsigned (see docs/dev/MACOS_CODE_SIGNING.md). electron-builder imports
+      # CSC_LINK into a temporary keychain itself. Per-arch script:
+      # electron-builder's --arm64/--x64 flags are additive over the config's
+      # arch list, so electron-builder.yml must not pin mac.target arches for
+      # the flag to actually restrict the build to a single arch.
       - name: build-mac
         if: matrix.platform == 'macos'
         run: pnpm run build:mac:${{ matrix.arch }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_LINK: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: build-win
         if: matrix.platform == 'windows'
@@ -196,6 +203,7 @@ jobs:
       - name: Compose release notes body
         env:
           IS_PRERELEASE: ${{ contains(github.ref_name, '-') }}
+          MAC_SIGNED: ${{ secrets.MAC_CERTIFICATE_BASE64 != '' && secrets.APPLE_ID != '' }}
         run: |
           {
             if [[ "$IS_PRERELEASE" == "true" ]]; then
@@ -203,12 +211,14 @@ jobs:
               echo "- May contain bugs and unfinished features."
               echo ""
             fi
-            echo "## ⚠️ Note for macOS users"
-            echo "Builds are unsigned (no Apple Developer ID). After dragging MarkText into Applications, clear the quarantine flag once:"
-            echo '```'
-            echo 'xattr -d com.apple.quarantine /Applications/MarkText.app'
-            echo '```'
-            echo ""
+            if [[ "$MAC_SIGNED" != "true" ]]; then
+              echo "## ⚠️ Note for macOS users"
+              echo "Builds are unsigned (no Apple Developer ID). After dragging MarkText into Applications, clear the quarantine flag once:"
+              echo '```'
+              echo 'xattr -d com.apple.quarantine /Applications/MarkText.app'
+              echo '```'
+              echo ""
+            fi
             echo "## Verifying downloads"
             echo "All artifacts are listed with their SHA-256 in \`SHA256SUMS.txt\`. Verify with:"
             echo '```'
