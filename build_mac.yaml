@@ -1,0 +1,25 @@
+file_pattern: "^(?!(?:.*/)?(?:node_modules|\\.git|\\.venv|__pycache__|\\.mypy_cache|\\.tox|\\.eggs|\\.cache|coverage|dist|out|\\.next|\\.turbo)/).*\\.(ts|tsx|mts|cts|js|mjs|cjs|vue|css|scss|html|ejs|json|yml|yaml|md|txt|py|sh|bat|patch|png|jpg|jpeg|gif|svg|ico|icns|ttf|otf|woff|woff2|plist|xml|nsh|desktop|lock|toml|npmrc|gitkeep|madgerc|stylelintrc|editorconfig|prettierignore|info)$"
+script: "build.sh"
+binary: "bash"
+required_tools:
+  - git
+  - node
+  - pnpm
+variables:
+  app_name: "MarkText"
+  date_version_number: "auto"
+  arch: "x64"
+bundle:
+  format: dmg
+  volume_name: "MarkText"
+  contents:
+    - "dist/MarkText-x64-mac.dmg"
+artifact_name: "{app_name}-{date_version_number}-x64-mac.dmg"
+output_dir: "dist"
+local_bundle: true
+notarize:
+  identity: "Developer ID Application: PLACEHOLDER (TEAMIDXXXX)"
+  team_id: "TEAMIDXXXX"
+  keychain_profile: "notarytool-profile"
+post_build_scripts:
+  - "ls -la dist/"

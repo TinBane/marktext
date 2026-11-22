@@ -1,0 +1,19 @@
+file_pattern: "^(?!(?:.*/)?(?:node_modules|\\.git|\\.venv|__pycache__|\\.mypy_cache|\\.tox|\\.eggs|\\.cache|coverage|dist|out|\\.next|\\.turbo)/).*\\.(ts|tsx|mts|cts|js|mjs|cjs|vue|css|scss|html|ejs|json|yml|yaml|md|txt|py|sh|bat|patch|png|jpg|jpeg|gif|svg|ico|icns|ttf|otf|woff|woff2|plist|xml|nsh|desktop|lock|toml|npmrc|gitkeep|madgerc|stylelintrc|editorconfig|prettierignore|info)$"
+script: "build.bat"
+binary: "cmd.exe"
+required_tools:
+  - git
+  - node
+  - pnpm
+variables:
+  app_name: "MarkText"
+  date_version_number: "auto"
+  arch: "x64"
+bundle:
+  format: zip
+  contents:
+    - "dist/win-unpacked"
+artifact_name: "{app_name}-{date_version_number}-x64-win.zip"
+output_dir: "dist"
+post_build_scripts:
+  - "dir dist\\"

@@ -1,0 +1,191 @@
+From 4ded9a4260b0b2265ebb590a721865acdc2ff1b3 Mon Sep 17 00:00:00 2001
+From: Adrian Beale <adrian@tinyme.com>
+Date: Wed, 4 Feb 2026 16:53:14 +1100
+Subject: [PATCH] fix: resolve editor bugs and add table spacing auto-fix
+
+- Fix source code view showing blank screen in compiled macOS app by
+  adding @codemirror packages to webpack whitelist for proper bundling
+- Fix delete key incorrectly merging content into code blocks by adding
+  guards for protected block types (codeContent, cellContent, etc.)
+- Add autoFixTableSpacing preference to automatically insert blank lines
+  before tables that are missing them (enabled by default)
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+---
+ src/main/preferences/schema.json              |  5 ++++
+ src/muya/lib/config/index.js                  |  2 ++
+ src/muya/lib/utils/importMarkdown.js          | 26 +++++++++++++++++--
+ .../components/editorWithTabs/editor.vue      | 10 +++++++
+ src/renderer/prefComponents/editor/index.vue  | 14 ++++++++++
+ static/preference.json                        |  1 +
+ 6 files changed, 56 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/preferences/schema.json b/src/main/preferences/schema.json
+index 1904059a..13707e04 100644
+--- a/src/main/preferences/schema.json
++++ b/src/main/preferences/schema.json
+@@ -121,6 +121,11 @@
+     "type": "boolean",
+     "default": true
+   },
++  "autoFixTableSpacing": {
++    "description": "Editor--Automatically insert blank line before tables when missing",
++    "type": "boolean",
++    "default": true
++  },
+   "autoPairBracket": {
+     "description": "Editor--Automatically brackets when editing",
+     "type": "boolean",
+diff --git a/src/muya/lib/config/index.js b/src/muya/lib/config/index.js
+index 815f5bcf..f2be17cb 100644
+--- a/src/muya/lib/config/index.js
++++ b/src/muya/lib/config/index.js
+@@ -255,6 +255,8 @@ export const MUYA_DEFAULT_OPTION = Object.freeze({
+   markdown: '',
+   // Whether to trim the beginning and ending empty line in code block when open markdown.
+   trimUnnecessaryCodeBlockEmptyLines: false,
++  // Whether to auto-insert blank line before tables that are missing one.
++  autoFixTableSpacing: false,
+   preferLooseListItem: true,
+   autoPairBracket: true,
+   autoPairMarkdownSyntax: true,
+diff --git a/src/muya/lib/utils/importMarkdown.js b/src/muya/lib/utils/importMarkdown.js
+index 5f367804..19970a12 100644
+--- a/src/muya/lib/utils/importMarkdown.js
++++ b/src/muya/lib/utils/importMarkdown.js
+@@ -66,6 +66,21 @@ const turnSoftBreakToSpan = html => {
+   return root.innerHTML.trim()
+ }
+ 
++/**
++ * Fix table spacing by inserting blank lines before tables that are missing them.
++ * Tables require a blank line before them to be parsed correctly.
++ * @param {string} markdown - The raw markdown string
++ * @returns {string} - Markdown with fixed table spacing
++ */
++const fixTableSpacing = (markdown) => {
++  // Pattern matches:
++  // 1. A non-newline character followed by single newline (no blank line)
++  // 2. Followed by a table header (line with pipes)
++  // 3. Followed by alignment row (dashes with optional colons and pipes)
++  const tablePattern = /([^\n])\n((?:\|[^\n]+|\S[^\n]*\|[^\n]*)\n[ ]{0,3}\|?[ ]*[-:]+[-| :]*(?:\n|$))/g
++  return markdown.replace(tablePattern, '$1\n\n$2')
++}
++
+ const importRegister = ContentState => {
+   // turn markdown to blocks
+   ContentState.prototype.markdownToState = function (markdown) {
+@@ -83,15 +98,22 @@ const importRegister = ContentState => {
+       footnote,
+       isGitlabCompatibilityEnabled,
+       superSubScript,
+-      trimUnnecessaryCodeBlockEmptyLines
++      trimUnnecessaryCodeBlockEmptyLines,
++      autoFixTableSpacing
+     } = this.muya.options
+ 
++    // Apply table spacing fix before lexing
++    let processedMarkdown = markdown
++    if (autoFixTableSpacing) {
++      processedMarkdown = fixTableSpacing(markdown)
++    }
++
+     const tokens = new Lexer({
+       disableInline: true,
+       footnote,
+       isGitlabCompatibilityEnabled,
+       superSubScript
+-    }).lex(markdown)
++    }).lex(processedMarkdown)
+ 
+     let token
+     let block
+diff --git a/src/renderer/components/editorWithTabs/editor.vue b/src/renderer/components/editorWithTabs/editor.vue
+index 222a9cc5..79412817 100644
+--- a/src/renderer/components/editorWithTabs/editor.vue
++++ b/src/renderer/components/editorWithTabs/editor.vue
+@@ -154,6 +154,7 @@ export default {
+       codeFontFamily: state => state.preferences.codeFontFamily,
+       codeBlockLineNumbers: state => state.preferences.codeBlockLineNumbers,
+       trimUnnecessaryCodeBlockEmptyLines: state => state.preferences.trimUnnecessaryCodeBlockEmptyLines,
++      autoFixTableSpacing: state => state.preferences.autoFixTableSpacing,
+       editorFontFamily: state => state.preferences.editorFontFamily,
+       hideQuickInsertHint: state => state.preferences.hideQuickInsertHint,
+       hideLinkPopup: state => state.preferences.hideLinkPopup,
+@@ -346,6 +347,13 @@ export default {
+       }
+     },
+ 
++    autoFixTableSpacing: function (value, oldValue) {
++      const { editor } = this
++      if (value !== oldValue && editor) {
++        editor.setOptions({ autoFixTableSpacing: value })
++      }
++    },
++
+     bulletListMarker: function (value, oldValue) {
+       const { editor } = this
+       if (value !== oldValue && editor) {
+@@ -468,6 +476,7 @@ export default {
+         autoPairMarkdownSyntax,
+         autoPairQuote,
+         trimUnnecessaryCodeBlockEmptyLines,
++        autoFixTableSpacing,
+         bulletListMarker,
+         orderListDelimiter,
+         tabSize,
+@@ -517,6 +526,7 @@ export default {
+         autoPairBracket,
+         autoPairMarkdownSyntax,
+         trimUnnecessaryCodeBlockEmptyLines,
++        autoFixTableSpacing,
+         autoPairQuote,
+         bulletListMarker,
+         orderListDelimiter,
+diff --git a/src/renderer/prefComponents/editor/index.vue b/src/renderer/prefComponents/editor/index.vue
+index 4a866eb1..956633b6 100644
+--- a/src/renderer/prefComponents/editor/index.vue
++++ b/src/renderer/prefComponents/editor/index.vue
+@@ -73,6 +73,19 @@
+       </template>
+     </compound>
+ 
++    <compound>
++      <template #head>
++        <h6 class="title">Table settings:</h6>
++      </template>
++      <template #children>
++        <bool
++          description="Automatically fix missing blank lines before tables"
++          :bool="autoFixTableSpacing"
++          :onChange="value => onSelectChange('autoFixTableSpacing', value)"
++        ></bool>
++      </template>
++    </compound>
++
+     <compound>
+       <template #head>
+         <h6 class="title">Writing behavior:</h6>
+@@ -214,6 +227,7 @@ export default {
+       codeFontFamily: state => state.preferences.codeFontFamily,
+       codeBlockLineNumbers: state => state.preferences.codeBlockLineNumbers,
+       trimUnnecessaryCodeBlockEmptyLines: state => state.preferences.trimUnnecessaryCodeBlockEmptyLines,
++      autoFixTableSpacing: state => state.preferences.autoFixTableSpacing,
+       hideQuickInsertHint: state => state.preferences.hideQuickInsertHint,
+       hideLinkPopup: state => state.preferences.hideLinkPopup,
+       autoCheck: state => state.preferences.autoCheck,
+diff --git a/static/preference.json b/static/preference.json
+index a3e60cc2..50077044 100644
+--- a/static/preference.json
++++ b/static/preference.json
+@@ -19,6 +19,7 @@
+   "codeFontFamily": "DejaVu Sans Mono",
+   "codeBlockLineNumbers": true,
+   "trimUnnecessaryCodeBlockEmptyLines": true,
++  "autoFixTableSpacing": true,
+   "editorLineWidth": "",
+ 
+   "autoPairBracket": true,
+-- 
+2.54.0 (Apple Git-157)
+

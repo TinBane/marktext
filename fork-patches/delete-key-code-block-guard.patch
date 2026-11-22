@@ -1,0 +1,37 @@
+From 4ded9a4260b0b2265ebb590a721865acdc2ff1b3 Mon Sep 17 00:00:00 2001
+From: Adrian Beale <adrian@tinyme.com>
+Date: Wed, 4 Feb 2026 16:53:14 +1100
+Subject: [PATCH] fix: resolve editor bugs and add table spacing auto-fix
+
+- Fix source code view showing blank screen in compiled macOS app by
+  adding @codemirror packages to webpack whitelist for proper bundling
+- Fix delete key incorrectly merging content into code blocks by adding
+  guards for protected block types (codeContent, cellContent, etc.)
+- Add autoFixTableSpacing preference to automatically insert blank lines
+  before tables that are missing them (enabled by default)
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+---
+ src/muya/lib/contentState/deleteCtrl.js | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/muya/lib/contentState/deleteCtrl.js b/src/muya/lib/contentState/deleteCtrl.js
+index ad74787c..a75107ca 100644
+--- a/src/muya/lib/contentState/deleteCtrl.js
++++ b/src/muya/lib/contentState/deleteCtrl.js
+@@ -48,8 +48,10 @@ const deleteCtrl = ContentState => {
+     ) {
+       event.preventDefault()
+       if (nextBlock && /h\d|span/.test(nextBlock.type)) {
+-        // if cursor at the end of code block-language input, do nothing!
+-        if (nextBlock.functionType === 'codeContent' && startBlock.functionType === 'languageInput') {
++        // Prevent merging code blocks, table cells, and language inputs with other blocks.
++        // These block types have special structure that should not be merged.
++        const protectedTypes = ['codeContent', 'cellContent', 'languageInput', 'footnoteInput']
++        if (protectedTypes.includes(startBlock.functionType) || protectedTypes.includes(nextBlock.functionType)) {
+           return
+         }
+ 
+-- 
+2.54.0 (Apple Git-157)
+
