@@ -10,6 +10,7 @@ The previous fork (`update_components`, webpack + Vue compat + CodeMirror 6) is 
 |---|---|
 | **Lato Print** export theme for PDF and printing | `packages/desktop/src/renderer/src/assets/themes/export/lato-print.theme.css`, registered in `exportSettings/exportOptions.ts` and `util/pdf.ts`; label `exportSettings.options.themes.latoPrint` in every locale |
 | **macOS signing and notarization** (upstream ships unsigned) | `packages/desktop/electron-builder.yml` (`mac:`), `.github/workflows/release.yml` (secrets on the mac build step); setup in [docs/dev/MACOS_CODE_SIGNING.md](docs/dev/MACOS_CODE_SIGNING.md) |
+| **Export settings hold across windows and duplicate themes** (upstream already saves the export dialog's choices between runs): the dialog re-reads the saved choices every time it opens, so a second window doesn't show or save back a stale copy, and a custom theme file identical to a built-in one (e.g. a hand-installed `lato-print.theme.css`) is hidden, with a saved choice of it moved to the built-in | `components/exportSettings/index.vue`, `findBuiltInThemeByCss` in `util/pdf.ts`; test `test/unit/specs/export-theme-dedupe.spec.ts` |
 | **Payload remote-build configs** | `build.sh`, `build.bat`, `build_mac.yaml`, `build_win.yaml` (pnpm / electron-vite commands) |
 
 ## Parked patches (not applied)

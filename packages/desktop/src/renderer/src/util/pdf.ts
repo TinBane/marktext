@@ -21,6 +21,23 @@ export interface PdfCssOptions {
   [key: string]: unknown
 }
 
+// Built-in export themes by option value. A custom theme in
+// `<userData>/themes/export` with identical CSS is a leftover copy of a
+// built-in one: the dialog hides it and moves a saved choice to the built-in.
+export const BUILT_IN_EXPORT_THEMES: Readonly<Record<string, string>> = {
+  academic: academicTheme,
+  'lato-print': latoPrintTheme,
+  liber: liberTheme
+}
+
+const normalizeCss = (css: string): string => css.replace(/\r\n/g, '\n').trim()
+
+export const findBuiltInThemeByCss = (css: string): string | undefined => {
+  const target = normalizeCss(css)
+  if (!target) return undefined
+  return Object.entries(BUILT_IN_EXPORT_THEMES).find(([, css]) => normalizeCss(css) === target)?.[0]
+}
+
 export const getCssForOptions = async(options: PdfCssOptions): Promise<string> => {
   const {
     type,

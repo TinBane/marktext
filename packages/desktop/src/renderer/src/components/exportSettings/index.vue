@@ -292,6 +292,7 @@ import FontTextBox from '@/prefComponents/common/fontTextBox/index.vue'
 import Range from '@/prefComponents/common/range/index.vue'
 import TextBox from '@/prefComponents/common/textBox/index.vue'
 import { getPageSizeList, getHeaderFooterTypes, getExportThemeList } from './exportOptions'
+import { findBuiltInThemeByCss } from '@/util/pdf'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -401,6 +402,10 @@ const updateTranslations = () => {
 }
 
 const showDialog = (type: unknown) => {
+  // Re-read on every open, not only on mount: another window may have saved
+  // newer choices since this one started, and this window would otherwise
+  // show (and then save back) its stale copy.
+  restoreExportSettings()
   const exportTypeValue = String(type ?? '')
   exportType.value = exportTypeValue
   isPrintable.value = exportTypeValue !== 'styledHtml'
@@ -535,6 +540,13 @@ const loadThemesFromDisk = async () => {
     try {
       const buf = await window.fileUtils.readFile(fullname)
       const content = buf instanceof Uint8Array ? new TextDecoder('utf-8').decode(buf) : String(buf)
+      const builtIn = findBuiltInThemeByCss(content)
+      if (builtIn) {
+        // Same CSS as a built-in theme: don't list it twice, and point a saved
+        // choice of the copy at the built-in so the selection survives.
+        if (theme.value === filename) theme.value = builtIn
+        continue
+      }
       const match = content.match(/^(?:\/\*+[ \t]*([A-z0-9 -]+)[ \t]*(?:\*+\/|[\n\r])?)/)
       const label = match && match[1] ? match[1] : filename
       themeList.value.push({ value: filename, label })
