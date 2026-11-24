@@ -14,14 +14,7 @@ The previous fork (`update_components`, webpack + Vue compat + CodeMirror 6) is 
 
 ## Parked patches (not applied)
 
-Two fixes from the old fork are kept as patch files in [`fork-patches/`](fork-patches/), because upstream rewrote the editor engine (`packages/muya`, `@muyajs/core`) and they may no longer be needed. They are diffs against the **old** tree (`src/muya/lib/...`, Vuex prefs), so they will not `git apply` here; they record what the fix did. Test the scenario first, and port a patch only if the problem still reproduces.
-
-### `delete-key-code-block-guard.patch`
-
-- **Bug it fixed:** pressing Delete at the end of a line could merge a protected block (code block content, table cell, code-language input, footnote input) with its neighbour, pulling text into a code block and throwing errors.
-- **How to test:** put the cursor at the end of a paragraph directly above a fenced code block, a table, and a footnote, and press Delete; also at the end of the last line inside a code block (including after a trailing `>`), and at the end of the code-language input. Nothing should merge and the console should stay clean.
-- **Likely status:** probably not needed. In the new engine the paragraph Delete handler only merges into a following *paragraph* and does nothing for code content or table cells (`packages/muya/src/block/base/format.ts`, `deleteHandler`), and code/language content swallows Delete at the end (`packages/muya/src/block/base/content.ts`).
-- **If it still reproduces:** add the guard to the relevant `deleteHandler` in `packages/muya/src/block/...`, with a spec next to the existing ones in `packages/muya/src/block/base/__tests__/`.
+One fix from the old fork is kept as a patch file in [`fork-patches/`](fork-patches/), because upstream rewrote the editor engine (`packages/muya`, `@muyajs/core`) and it may no longer be needed. It is a diff against the **old** tree (`src/muya/lib/...`, Vuex prefs), so it will not `git apply` here; it records what the fix did. Test the scenario first, and port it only if the problem still reproduces.
 
 ### `table-spacing-autofix.patch`
 
@@ -40,4 +33,7 @@ Two fixes from the old fork are kept as patch files in [`fork-patches/`](fork-pa
 - **Likely status:** unknown. Upstream moved to `marked` 18 and has done a lot of CommonMark/GFM alignment work, and GFM itself allows a table to start straight after a paragraph line, so it may now work without the fix.
 - **If it still reproduces:** port it as a Muya option (`packages/muya/src/config/index.ts`, `packages/muya/src/types.ts`, the `markdownToState` pre-lex step in `packages/muya/src/state/markdownToState.ts`), plus the desktop preference (`packages/desktop/src/shared/preferences/schema.json`, `static/preference.json`, `src/shared/types/preferences.ts`, the editor preference page and `editor.vue` option wiring, and a label in every locale). Follow how `trimUnnecessaryCodeBlockEmptyLines` is wired end to end.
 
-The old fork's third fix in the same commit (whitelisting `@codemirror/*` in webpack so source mode wasn't blank in the packaged Mac app) is obsolete: upstream uses electron-vite and CodeMirror 5.
+## Dropped fixes
+
+- **Delete-key code-block guard** (Delete at the end of a line pulling text into a code block, table cell, code-language input or footnote): tested by hand in 0.24.0-dev on 2026-11-25 and upstream's new editor no longer does it, so the patch was dropped. It is still in the old branch, in commit `4ded9a42` (`src/muya/lib/contentState/deleteCtrl.js`).
+- The old fork's third fix in the same commit (whitelisting `@codemirror/*` in webpack so source mode wasn't blank in the packaged Mac app) is obsolete: upstream uses electron-vite and CodeMirror 5.
