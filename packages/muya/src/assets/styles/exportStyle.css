@@ -164,8 +164,19 @@
     display: table;
 }
 
+/* Wrap long cell content (#5605) without squeezing columns. `anywhere` would
+   let any word break between letters, which also shrinks each column's
+   minimum width, so the table layout crushes narrow columns into one or two
+   letters per line ("nam/e", "Pitch/ed"). `break-word` keeps whole words and
+   only splits a word too long for the cell; links, the usual long tokens,
+   may still break anywhere so a long URL can't push the table off the page. */
 .markdown-body table th,
 .markdown-body table td {
+    overflow-wrap: break-word;
+}
+
+.markdown-body table th a,
+.markdown-body table td a {
     overflow-wrap: anywhere;
 }
 
